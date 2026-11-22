@@ -361,7 +361,8 @@ body {
     height: 220px;
 }
 
-#exerciseBody textarea {
+#exerciseBody textarea,
+#reflectBody textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid var(--border-color);

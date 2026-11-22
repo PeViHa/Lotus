@@ -99,6 +99,24 @@
         </div>
     </div>
 
+    <!-- Reflectie modal (visje stelt een vraag na opslaan) -->
+    <div class="modal" id="reflectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="reflectTitle">Het visje kijkt je aan 🐟</h2>
+                <button class="close-modal" id="closeReflect">&times;</button>
+            </div>
+            <div id="reflectBody">
+                <p class="exercise-task" id="reflectQuestion"></p>
+                <textarea id="reflectText" rows="4" placeholder="Jouw antwoord..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="otherExerciseBtn">Andere opdracht</button>
+                <button type="button" class="btn btn-primary" id="saveReflect">Bewaar antwoord</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script src="vijver.js"></script>

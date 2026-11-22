@@ -796,6 +796,36 @@ function drawExercise(type) {
     return pool.splice(i, 1)[0];
 }
 
+const REFLECT_QUESTIONS = [
+    'Wat zie je hier in?',
+    'Welk element hieruit kan je verder helpen met jouw vraag?',
+    'Wat neem je hieruit mee?',
+    'Hoe ga je dit de komende tijd toepassen?'
+];
+
+let reflectQuestion = null;
+
+function openReflection() {
+    reflectQuestion = REFLECT_QUESTIONS[Math.floor(Math.random() * REFLECT_QUESTIONS.length)];
+    document.getElementById('reflectQuestion').textContent = reflectQuestion;
+    document.getElementById('reflectText').value = '';
+    showModal('reflectModal');
+}
+
+function saveReflection() {
+    const v = document.getElementById('reflectText').value.trim();
+    if (!v) { showToast('Schrijf eerst je antwoord.', 'error'); return; }
+    const log = loadLog();
+    if (log.length) {
+        log[0].reflectie = { vraag: reflectQuestion, antwoord: v };
+        localStorage.setItem(LOG_KEY, JSON.stringify(log));
+    }
+    closeModal('reflectModal');
+    renderLogboek();
+    go(6);
+    showToast('Antwoord opgeslagen bij je logboek-item 🌸', 'success');
+}
+
 function openExercise(type) {
     exerciseType = type;
     exerciseData = null;
@@ -881,7 +911,7 @@ function saveExercise() {
     localStorage.setItem(LOG_KEY, JSON.stringify(log));
     closeModal('exerciseModal');
     renderLogboek();
-    go(6);
+    openReflection();
     showToast('Opgeslagen in je vijver-logboek 🌿', 'success');
 }
 
@@ -920,6 +950,9 @@ function renderLogboek() {
             `<div class="log-type">${typeLabel}</div>`;
         if (entry.oefening.opdracht) {
             inner += `<p class="log-task">Opdracht: ${escapeHtml(entry.oefening.opdracht)}</p>`;
+        }
+        if (entry.reflectie) {
+            inner += `<p class="log-task">“${escapeHtml(entry.reflectie.vraag)}” — ${escapeHtml(entry.reflectie.antwoord)}</p>`;
         }
         if (entry.blokkade && entry.blokkade.text) {
             inner += `<p class="log-struggle">“${escapeHtml(entry.blokkade.text)}”</p>`;
@@ -979,7 +1012,7 @@ function setupEventListeners() {
         session = { blokkade: { text: null, image: null } };
         struggleDrew = false;
         document.getElementById('struggleText').value = '';
-        go(0);
+        go(5);
     });
 
     document.querySelectorAll('.fish-btn').forEach(btn => {
@@ -1005,6 +1038,21 @@ function setupEventListeners() {
     exerciseModal.addEventListener('click', (e) => {
         if (e.target === e.currentTarget && modalDownTarget === e.currentTarget) {
             closeModal('exerciseModal');
+        }
+    });
+
+    document.getElementById('closeReflect').addEventListener('click', () => closeModal('reflectModal'));
+    document.getElementById('saveReflect').addEventListener('click', saveReflection);
+    document.getElementById('otherExerciseBtn').addEventListener('click', () => {
+        closeModal('reflectModal');
+        openExercise(exerciseType);
+    });
+    const reflectModal = document.getElementById('reflectModal');
+    let reflectDownTarget = null;
+    reflectModal.addEventListener('pointerdown', (e) => { reflectDownTarget = e.target; });
+    reflectModal.addEventListener('click', (e) => {
+        if (e.target === e.currentTarget && reflectDownTarget === e.currentTarget) {
+            closeModal('reflectModal');
         }
     });
 
