@@ -875,10 +875,12 @@ function openLogboek() {
 
 function setupEventListeners() {
     document.getElementById('throwBtn').addEventListener('click', () => doThrow(state.W / 2));
+    document.getElementById('struggleText').addEventListener('input', () => resetAutoTimer(2));
     document.getElementById('next4Btn').addEventListener('click', () => go(5));
     document.getElementById('againBtn').addEventListener('click', () => {
         session = { blokkade: { text: null, image: null } };
         struggleDrew = false;
+        document.getElementById('struggleText').value = '';
         go(0);
     });
 

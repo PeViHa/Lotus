@@ -301,7 +301,8 @@ body {
 }
 
 /* Invoervelden */
-.vijver-card textarea {
+.vijver-card textarea,
+.struggle-bar textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid var(--border-color);
@@ -322,6 +323,23 @@ body {
     border-radius: 8px;
     cursor: crosshair;
     touch-action: none;
+}
+
+.struggle-bar {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    width: min(440px, 90%);
+    pointer-events: auto;
+    background: rgba(247, 241, 227, 0.92);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.struggle-bar textarea {
+    margin-bottom: 0;
 }
 
 #exerciseBody {
