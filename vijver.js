@@ -492,7 +492,13 @@ canvas.addEventListener('pointerdown', (e) => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    if (state.mode === 'throw') {
+    if (state.mode === 'lotus') {
+        go(1);
+    } else if (state.mode === 'bump') {
+        go(2);
+    } else if (state.mode === 'intake') {
+        advanceFromIntake();
+    } else if (state.mode === 'throw') {
         doThrow(x);
     } else if (state.mode === 'choose') {
         const f = hitFish(x, y);
@@ -610,16 +616,18 @@ function attachDrawPad(pad, onDraw) {
 
 function setupStrugglePad() {
     const pad = document.getElementById('struggleCanvas');
-    if (pad.dataset.ready) return;
+    if (!pad || pad.dataset.ready) return;
     pad.dataset.ready = '1';
     struggleCtx = attachDrawPad(pad, () => { struggleDrew = true; resetAutoTimer(2); });
 }
 
 function advanceFromIntake() {
-    const text = document.getElementById('struggleText').value.trim();
+    const textEl = document.getElementById('struggleText');
+    const pad = document.getElementById('struggleCanvas');
+    const text = textEl ? textEl.value.trim() : '';
     session.blokkade = {
         text: text || null,
-        image: struggleDrew ? document.getElementById('struggleCanvas').toDataURL('image/png') : null
+        image: (struggleDrew && pad) ? pad.toDataURL('image/png') : null
     };
     go(3);
 }
@@ -866,33 +874,16 @@ function openLogboek() {
 // ============================================
 
 function setupEventListeners() {
-    document.getElementById('startBtn').addEventListener('click', () => go(1));
-    document.getElementById('next1Btn').addEventListener('click', () => go(2));
-    document.getElementById('next2Btn').addEventListener('click', advanceFromIntake);
-    document.getElementById('struggleText').addEventListener('input', () => resetAutoTimer(2));
     document.getElementById('throwBtn').addEventListener('click', () => doThrow(state.W / 2));
     document.getElementById('next4Btn').addEventListener('click', () => go(5));
     document.getElementById('againBtn').addEventListener('click', () => {
         session = { blokkade: { text: null, image: null } };
         struggleDrew = false;
-        document.getElementById('struggleText').value = '';
-        const pad = document.getElementById('struggleCanvas');
-        if (pad.dataset.ready) {
-            delete pad.dataset.ready;
-            pad.getContext('2d').clearRect(0, 0, pad.width, pad.height);
-        }
         go(0);
     });
 
     document.querySelectorAll('.fish-btn').forEach(btn => {
         btn.addEventListener('click', () => openExercise(btn.dataset.fish));
-    });
-
-    document.getElementById('clearStruggle').addEventListener('click', () => {
-        document.getElementById('struggleText').value = '';
-        struggleDrew = false;
-        const pad = document.getElementById('struggleCanvas');
-        pad.getContext('2d').clearRect(0, 0, pad.width, pad.height);
     });
 
     document.getElementById('exportLogBtn').addEventListener('click', exportLog);
