@@ -911,7 +911,7 @@ function saveExercise() {
     localStorage.setItem(LOG_KEY, JSON.stringify(log));
     closeModal('exerciseModal');
     renderLogboek();
-    go(6);
+    openReflection();
     showToast('Opgeslagen in je vijver-logboek 🌿', 'success');
 }
 
