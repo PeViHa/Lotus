@@ -357,6 +357,15 @@ body {
     padding: 20px;
 }
 
+#introBody {
+    padding: 20px;
+}
+
+#introBody p {
+    color: var(--text-color);
+    margin-bottom: 10px;
+}
+
 #exerciseBody canvas.draw-pad {
     height: 220px;
 }

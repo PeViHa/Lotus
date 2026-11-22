@@ -56,6 +56,12 @@ let struggleCtx = null;
 let struggleDrew = false;
 
 const LOG_KEY = 'vijver-logboek-v1';
+const GROWTH_KEY = 'lotus-growth-v1';
+
+function getGrowth() {
+    try { return Math.max(0, parseInt(localStorage.getItem(GROWTH_KEY), 10) || 0); }
+    catch (e) { return 0; }
+}
 let exerciseType = null;
 let exerciseData = null;
 let exerciseDrew = false;
@@ -471,13 +477,15 @@ function render(t) {
     drawRipples();
     state.fish.forEach(f => drawFish(f, t));
     drawParticles();
+    const growth = Math.min(getGrowth(), 12);
+    const lotusScale = Math.min(W, H) / 260 * (1 + 0.06 * growth);
     if (state.mode === 'lotus') {
         const pulse = 0.92 + Math.sin(t * 1.2) * 0.08;
-        drawLotus(W / 2, waterY, Math.min(W, H) / 260, Math.max(state.bloomT, pulse), t);
+        drawLotus(W / 2, waterY, lotusScale, Math.max(state.bloomT, pulse), t);
     } else if (state.mode === 'done') {
-        drawLotus(W / 2, waterY, Math.min(W, H) / 240, state.bloomT, t);
-    } else if (state.mode === 'intake') {
-        drawLotus(W * 0.15, waterY, Math.min(W, H) / 380, 0.8, t);
+        drawLotus(W / 2, waterY, lotusScale * 1.1, state.bloomT, t);
+    } else {
+        drawLotus(W / 2, waterY, lotusScale * 0.9, 1, t);
     }
 }
 
@@ -909,10 +917,11 @@ function saveExercise() {
     const log = loadLog();
     log.unshift(entry);
     localStorage.setItem(LOG_KEY, JSON.stringify(log));
+    localStorage.setItem(GROWTH_KEY, String(getGrowth() + 1));
     closeModal('exerciseModal');
     renderLogboek();
     openReflection();
-    showToast('Opgeslagen in je vijver-logboek 🌿', 'success');
+    showToast('Opgeslagen in je lotus-logboek 🌿', 'success');
 }
 
 // ============================================
@@ -983,7 +992,7 @@ function exportLog() {
     const blob = new Blob([JSON.stringify(loadLog(), null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'vijver-logboek.json';
+    a.download = 'lotus-logboek.json';
     a.click();
     URL.revokeObjectURL(a.href);
     showToast('Logboek geëxporteerd 📥', 'success');
@@ -1019,7 +1028,7 @@ function exportLogHtml() {
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Vijver-logboek</title>
+<title>Lotus-logboek</title>
 <style>
 body { font-family: Georgia, serif; max-width: 640px; margin: 24px auto; padding: 0 16px; color: #22332b; background: #f7f1e3; }
 h1 { color: #2e6b53; }
@@ -1032,14 +1041,14 @@ img { max-width: 100%; border-radius: 6px; margin-top: 6px; }
 </style>
 </head>
 <body>
-<h1>🌸 Vijver-logboek</h1>
+<h1>🌸 Lotus-logboek</h1>
 ${items || '<p>Nog geen sessies.</p>'}
 </body>
 </html>`;
     const blob = new Blob([html], { type: 'text/html' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'vijver-logboek.html';
+    a.download = 'lotus-logboek.html';
     a.click();
     URL.revokeObjectURL(a.href);
     showToast('Logboek geëxporteerd als HTML 🌐', 'success');
@@ -1121,6 +1130,17 @@ function setupEventListeners() {
         }
     });
 
+    document.getElementById('closeIntro').addEventListener('click', () => closeModal('introModal'));
+    document.getElementById('startIntro').addEventListener('click', () => closeModal('introModal'));
+    const introModal = document.getElementById('introModal');
+    let introDownTarget = null;
+    introModal.addEventListener('pointerdown', (e) => { introDownTarget = e.target; });
+    introModal.addEventListener('click', (e) => {
+        if (e.target === e.currentTarget && introDownTarget === e.currentTarget) {
+            closeModal('introModal');
+        }
+    });
+
     window.addEventListener('resize', resize);
 }
 
@@ -1132,6 +1152,7 @@ resize();
 setupEventListeners();
 renderLogboek();
 go(0);
+showModal('introModal');
 requestAnimationFrame((now) => {
     lastTime = now;
     requestAnimationFrame(loop);

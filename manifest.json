@@ -1,0 +1,11 @@
+{
+    "name": "Lotus - Uit je creatieve blokkade",
+    "short_name": "Lotus",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#f7f1e3",
+    "theme_color": "#2e6b53",
+    "icons": [
+        { "src": "lotus.png", "sizes": "684x608", "type": "image/png", "purpose": "any" }
+    ]
+}

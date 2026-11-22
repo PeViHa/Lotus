@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vijver - Uit je creatieve blokkade</title>
+    <title>Lotus - Uit je creatieve blokkade</title>
+    <link rel="icon" type="image/png" href="lotus.png">
+    <link rel="apple-touch-icon" href="lotus.png">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="vijver.css">
 </head>
 <body class="vijver-page">
@@ -13,7 +16,7 @@
 
             <div class="vijver-overlay">
                 <header class="vijver-header">
-                    <h1>&#127800; Vijver</h1>
+                    <h1>&#127800; Lotus</h1>
                     <button class="btn btn-small btn-secondary" id="logboekToggle">&#128214; Logboek</button>
                 </header>
 
@@ -77,7 +80,7 @@
 
         <aside class="vijver-logboek" id="vijverLogboek">
             <div class="logboek-header">
-                <h2>&#128214; Vijver-logboek</h2>
+                <h2>&#128214; Lotus-logboek</h2>
                 <div class="logboek-header-actions">
                     <button class="btn btn-small btn-secondary" id="exportLogBtn">&#128229; JSON</button>
                     <button class="btn btn-small btn-secondary" id="exportHtmlBtn">&#127760; HTML</button>
@@ -117,6 +120,23 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="otherExerciseBtn">Andere opdracht</button>
                 <button type="button" class="btn btn-primary" id="saveReflect">Bewaar antwoord</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intro modal (toelichting bij opstarten) -->
+    <div class="modal" id="introModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>&#127800; Welkom bij Lotus</h2>
+                <button class="close-modal" id="closeIntro">&times;</button>
+            </div>
+            <div id="introBody">
+                <p>Lotus helpt je uit een creatieve blokkade. Klik op het water om verder te gaan: de vis zwemt tegen een steen, je laat de steen los in het water en kiest een visje met een kleine teken-, foto- of schrijfopdracht.</p>
+                <p>Je werk bewaar je in je Lotus-logboek. Na elke opdracht groeit de lotus een beetje mee. 🌸</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="startIntro">Begrepen &mdash; klik op het water</button>
             </div>
         </div>
     </div>
