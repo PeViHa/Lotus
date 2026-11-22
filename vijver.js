@@ -60,6 +60,18 @@ let exerciseType = null;
 let exerciseData = null;
 let exerciseDrew = false;
 
+const SPRITES = {};
+[['lotus', 'lotus.png'], ['steen', 'Steen.png'], ['lelie', 'lelie.png']].forEach(([key, src]) => {
+    const img = new Image();
+    img.src = src;
+    SPRITES[key] = img;
+});
+
+function spriteReady(key) {
+    const img = SPRITES[key];
+    return img && img.complete && img.naturalWidth > 0;
+}
+
 // ============================================
 // Canvas sizing & scene layout per scherm
 // ============================================
@@ -169,7 +181,26 @@ function drawBackground(t) {
 }
 
 function drawLeaves(t) {
-    const { W, waterY } = state;
+    const { W, H, waterY } = state;
+    if (spriteReady('lelie')) {
+        const img = SPRITES.lelie;
+        const spots = [
+            [W * 0.10, waterY + 10, 1, 1],
+            [W * 0.90, waterY + 24, -1, 0.9],
+            [W * 0.28, waterY + H * 0.16, 0.8, 0.75],
+            [W * 0.74, waterY + H * 0.30, -0.7, 0.85]
+        ];
+        spots.forEach(([x, y, rot, sc], i) => {
+            const w = W * 0.17 * sc;
+            const h = w * (img.naturalHeight / img.naturalWidth);
+            ctx.save();
+            ctx.translate(x, y + Math.sin(t * 0.8 + i * 1.7) * 2);
+            ctx.rotate(Math.sin(t * 0.8 + i * 1.7) * 0.06 + rot * 0.1);
+            ctx.drawImage(img, -w / 2, -h / 2, w, h);
+            ctx.restore();
+        });
+        return;
+    }
     ctx.fillStyle = PAL.leaf;
     [[-6, 1], [W + 6, -1]].forEach(([baseX, side]) => {
         for (let i = 0; i < 3; i++) {
@@ -192,6 +223,14 @@ function drawStone(s) {
     ctx.save();
     ctx.translate(s.x, s.y);
     ctx.rotate(s.rot || 0);
+    if (spriteReady('steen')) {
+        const img = SPRITES.steen;
+        const w = s.r * 2.6;
+        const h = w * (img.naturalHeight / img.naturalWidth);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        ctx.restore();
+        return;
+    }
     ctx.fillStyle = PAL.steen;
     ctx.strokeStyle = PAL.steenDark;
     ctx.lineWidth = 2;
@@ -243,6 +282,16 @@ function drawFish(f, t) {
 
 function drawLotus(x, y, scale, bloom, t) {
     const bob = Math.sin(t * 1.2) * 2;
+    if (spriteReady('lotus')) {
+        const img = SPRITES.lotus;
+        const size = 62 * scale * (0.55 + 0.45 * bloom);
+        const h = size * (img.naturalHeight / img.naturalWidth);
+        ctx.save();
+        ctx.translate(x, y + bob);
+        ctx.drawImage(img, -size / 2, -h / 2, size, h);
+        ctx.restore();
+        return;
+    }
     ctx.save();
     ctx.translate(x, y + bob);
     ctx.fillStyle = PAL.leaf;
