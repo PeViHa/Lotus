@@ -712,7 +712,7 @@ function go(n) {
     if (n === 6) {
         const last = loadLog()[0];
         document.getElementById('doneSummary').textContent = last
-            ? `Oefening “${FISH_TYPES[last.oefening.type].label}” bewaard in je logboek. De lotus bloeit weer.`
+            ? `Opdracht bewaard in je logboek: “${last.oefening.opdracht || FISH_TYPES[last.oefening.type].label}”. De lotus bloeit weer.`
             : 'De lotus bloeit weer uit een mindere situatie.';
     }
     document.querySelectorAll('.vijver-screen').forEach(sec => {
@@ -748,20 +748,66 @@ function showToast(message, type = 'info') {
 // ============================================
 
 const EXERCISE_TITLES = {
-    teken: 'Teken iets willekeurigs ✏️',
-    foto: 'Fotografeer iets uit je omgeving 📷',
-    tekst: 'Schrijf 3 zinnen ✍️'
+    teken: 'Teken-oefening ✏️',
+    foto: 'Foto-oefening 📷',
+    tekst: 'Schrijf-oefening ✍️'
 };
+
+const EXERCISES = {
+    teken: [
+        'Teken een random object dat links van je staat',
+        'Teken een bloem die niet op een bloem lijkt',
+        'Blind tekenen: kijk naar een object en teken het zonder op het papier te kijken',
+        'Teken iets uit je omgeving met je andere hand, max 2 minuten — lelijk mag',
+        'Eén lijn: teken een dier zonder je pen van het papier te halen',
+        'Teken hetzelfde object 3x: realistisch, als kinderkrabbel, als emoji',
+        'Teken je blokkade als een wezen en geef het daarna iets belachelijks (een feesthoedje, teenslippers)',
+        'Combineer twee schijnbaar niet-passende dingen uit je kamer tot één nieuw wezen'
+    ],
+    foto: [
+        'Fotografeer 3 dingen met de kleur paars',
+        'Fotografeer 3 dingen met een ronde vorm',
+        'Fotografeer iets dat je vandaag al 10x voorbij bent gelopen zonder het echt te zien',
+        'Maak een foto vanaf de grond: de wereld vanuit muisperspectief',
+        'Fotografeer 3 structuren vlak bij elkaar (ruw, zacht, glimmend)',
+        'Fotografeer het oudste dat je kunt zien vanuit waar je zit',
+        'Fotografeer iets dat "niet af" of juist "verkeerd" is (zoals een scheve poster)'
+    ],
+    tekst: [
+        'Schrijf een gedichtje van maximaal 10 woorden over iets dat je nu om je heen ziet (aanvulling op je begonnen zin)',
+        'Pak het dichtstbijzijnde boek: de 3e zin van een willekeurige pagina is je openingszin',
+        'Vertel je dag in exact zes woorden',
+        'Beschrijf de ruimte waarin je zit alsof je het voor het eerst ziet',
+        'Schrijf een korte brief aan je blokkade ("Beste blokkade, ...")',
+        'Schrijf 90 seconden zonder stoppen, zonder verbeteren (stream of consciousness)',
+        'Lijst 10 dingen die eigenlijk niet zouden mogen bestaan'
+    ]
+};
+
+const exercisePools = { teken: [], foto: [], tekst: [] };
+let exerciseText = null;
+
+function drawExercise(type) {
+    if (!exercisePools[type].length) {
+        exercisePools[type] = EXERCISES[type].slice();
+    }
+    const pool = exercisePools[type];
+    const i = Math.floor(Math.random() * pool.length);
+    return pool.splice(i, 1)[0];
+}
 
 function openExercise(type) {
     exerciseType = type;
     exerciseData = null;
     exerciseDrew = false;
+    exerciseText = drawExercise(type);
     document.getElementById('exerciseTitle').textContent = EXERCISE_TITLES[type];
     const body = document.getElementById('exerciseBody');
+    const task = '<p class="exercise-task">' + escapeHtml(exerciseText) + '</p>';
 
     if (type === 'teken') {
-        body.innerHTML = '<canvas id="exCanvas" class="draw-pad"></canvas>' +
+        body.innerHTML = task +
+            '<canvas id="exCanvas" class="draw-pad"></canvas>' +
             '<div class="vijver-actions"><button type="button" class="btn btn-small btn-secondary" id="exClear">Wissen</button></div>';
         showModal('exerciseModal');
         attachDrawPad(document.getElementById('exCanvas'), () => { exerciseDrew = true; });
@@ -773,7 +819,7 @@ function openExercise(type) {
             exerciseDrew = false;
         });
     } else if (type === 'foto') {
-        body.innerHTML = '<p>Kies of maak een foto van iets dat je nu ziet:</p>' +
+        body.innerHTML = task +
             '<input type="file" id="exFile" accept="image/*" capture="environment">' +
             '<img id="exercisePreview" alt="Voorbeeld van je foto">';
         showModal('exerciseModal');
@@ -790,7 +836,7 @@ function openExercise(type) {
             reader.readAsDataURL(file);
         });
     } else {
-        body.innerHTML = '<p>Schrijf 3 zinnen over wat er nu wél lukt:</p>' +
+        body.innerHTML = task +
             '<textarea id="exText" rows="5" placeholder="Bijvoorbeeld: ik heb net..."></textarea>';
         showModal('exerciseModal');
     }
@@ -820,7 +866,7 @@ function saveExercise() {
         content = exerciseData;
     } else {
         const v = document.getElementById('exText').value.trim();
-        if (!v) { showToast('Schrijf eerst 3 zinnen.', 'error'); return; }
+        if (!v) { showToast('Schrijf eerst iets in het tekstveld.', 'error'); return; }
         content = v;
     }
 
@@ -828,7 +874,7 @@ function saveExercise() {
         id: Date.now(),
         datum: new Date().toISOString(),
         blokkade: session.blokkade,
-        oefening: { type: exerciseType, content }
+        oefening: { type: exerciseType, opdracht: exerciseText, content }
     };
     const log = loadLog();
     log.unshift(entry);
@@ -872,6 +918,9 @@ function renderLogboek() {
         const typeLabel = FISH_TYPES[entry.oefening.type].label;
         let inner = `<div class="log-date">${date}</div>` +
             `<div class="log-type">${typeLabel}</div>`;
+        if (entry.oefening.opdracht) {
+            inner += `<p class="log-task">Opdracht: ${escapeHtml(entry.oefening.opdracht)}</p>`;
+        }
         if (entry.blokkade && entry.blokkade.text) {
             inner += `<p class="log-struggle">“${escapeHtml(entry.blokkade.text)}”</p>`;
         }

@@ -265,6 +265,17 @@ body {
     margin-bottom: 14px;
 }
 
+.exercise-task {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+}
+
+.log-task {
+    font-style: italic;
+    margin: 6px 0;
+}
+
 .vijver-actions {
     display: flex;
     gap: 10px;
