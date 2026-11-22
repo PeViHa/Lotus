@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vijver - Uit je creatieve blokkade</title>
+    <link rel="stylesheet" href="vijver.css">
+</head>
+<body class="vijver-page">
+    <div class="vijver-layout">
+        <main class="vijver-stage" id="vijverStage">
+            <canvas id="pondCanvas"></canvas>
+
+            <div class="vijver-overlay">
+                <header class="vijver-header">
+                    <h1>&#127800; Vijver</h1>
+                    <button class="btn btn-small btn-secondary" id="logboekToggle">&#128214; Logboek</button>
+                </header>
+
+                <div class="vijver-screens" id="vijverScreens">
+                    <!-- Scherm 1: start -->
+                    <section class="vijver-screen active" data-screen="0">
+                        <div class="vijver-card">
+                            <h2>Loop je creatief vast?</h2>
+                            <p>Zwem mee in de vijver en laat de steen los. Een lotus bloeit uit elke mindere situatie.</p>
+                            <button class="btn btn-primary" id="startBtn">Begin &#127793;</button>
+                        </div>
+                    </section>
+
+                    <!-- Scherm 2: vis tegen steen -->
+                    <section class="vijver-screen" data-screen="1">
+                        <div class="vijver-card">
+                            <h2>Vis zwemt tegen de steen &#128031;&#129704;</h2>
+                            <p>Daar zwemt je creativiteit tegenaan.</p>
+                            <button class="btn btn-primary" id="next1Btn">Verder &rarr;</button>
+                        </div>
+                    </section>
+
+                    <!-- Scherm 3: struggle invoeren -->
+                    <section class="vijver-screen" data-screen="2">
+                        <div class="vijver-card">
+                            <h2>Waar zwem je tegenaan?</h2>
+                            <p>Typ hier je struggle (mag van alles zijn) &mdash; of teken hem hieronder. De animatie gaat vanzelf verder:</p>
+                            <textarea id="struggleText" rows="3" placeholder="Bijvoorbeeld: ik weet niet waarmee ik moet beginnen..."></textarea>
+                            <canvas id="struggleCanvas" class="draw-pad"></canvas>
+                            <div class="vijver-actions">
+                                <button class="btn btn-small btn-secondary" id="clearStruggle">Wissen</button>
+                                <button class="btn btn-primary" id="next2Btn">Verder &rarr;</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Scherm 4: steen in het water -->
+                    <section class="vijver-screen" data-screen="3">
+                        <div class="vijver-card">
+                            <h2>Steen in het water</h2>
+                            <p>De steen wordt zo losgelaten in het water &mdash; of tik zelf op het water:</p>
+                            <button class="btn btn-primary" id="throwBtn">Gooi de steen &#129704;</button>
+                        </div>
+                    </section>
+
+                    <!-- Scherm 5: vissen om de steen -->
+                    <section class="vijver-screen" data-screen="4">
+                        <div class="vijver-card">
+                            <h2>Vissen om de steen heen &#128031;</h2>
+                            <p>Kijk &mdash; er zwemmen vissen om de steen heen. Er komt weer ruimte.</p>
+                            <button class="btn btn-primary" id="next4Btn">Kies een visje &rarr;</button>
+                        </div>
+                    </section>
+
+                    <!-- Scherm 6: klik op een visje -->
+                    <section class="vijver-screen" data-screen="5">
+                        <div class="vijver-card">
+                            <h2>Klik op een visje</h2>
+                            <ul class="fish-legend">
+                                <li><span class="fish-dot" style="background:#e59bb6"></span> Roze: teken iets willekeurigs</li>
+                                <li><span class="fish-dot" style="background:#8e7cc3"></span> Paars: fotografeer iets uit je omgeving</li>
+                                <li><span class="fish-dot" style="background:#e8813a"></span> Oranje: schrijf 3 zinnen</li>
+                            </ul>
+                            <div class="vijver-actions">
+                                <button class="btn btn-small fish-btn" data-fish="teken" style="background:#e59bb6">&#9998;&#65039; Teken</button>
+                                <button class="btn btn-small fish-btn" data-fish="foto" style="background:#8e7cc3">&#128247; Foto</button>
+                                <button class="btn btn-small fish-btn" data-fish="tekst" style="background:#e8813a">&#9998; Schrijf</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Scherm 7: afronding -->
+                    <section class="vijver-screen" data-screen="6">
+                        <div class="vijver-card">
+                            <h2>De steen is losgelaten &#127800;</h2>
+                            <p id="doneSummary">Goed gedaan.</p>
+                            <div class="vijver-actions">
+                                <button class="btn btn-secondary" id="againBtn">Opnieuw</button>
+                                <button class="btn btn-primary" id="logboekBtn">Bekijk logboek</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <aside class="vijver-logboek" id="vijverLogboek">
+            <div class="logboek-header">
+                <h2>&#128214; Vijver-logboek</h2>
+                <button class="btn btn-small btn-secondary" id="exportLogBtn">&#128229; Export JSON</button>
+            </div>
+            <div id="logboekList" class="logboek-list"></div>
+        </aside>
+    </div>
+
+    <!-- Oefening modal -->
+    <div class="modal" id="exerciseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="exerciseTitle">Oefening</h2>
+                <button class="close-modal" id="closeExercise">&times;</button>
+            </div>
+            <div id="exerciseBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelExercise">Annuleren</button>
+                <button type="button" class="btn btn-primary" id="saveExercise">Bewaar in logboek</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="vijver.js"></script>
+</body>
+</html>

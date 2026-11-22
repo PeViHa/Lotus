@@ -1,0 +1,475 @@
+/* ============================================
+   Vijver - app tegen creatieve blokkade
+   Losstaand bestand: eigen basis + palet
+   Palet: aardetinten, zachtblauw, diepgroen
+   ============================================ */
+
+:root {
+    --primary-color: #1e4d3b;
+    --primary-color-light: #2e6b53;
+    --secondary-color: #a9cbdc;
+    --success-color: #2e6b53;
+    --warning-color: #d9a441;
+    --danger-color: #c4704f;
+    --background-color: #eadfc8;
+    --surface-color: #f7f1e3;
+    --text-color: #22332b;
+    --text-color-light: #5c6f64;
+    --border-color: #cbbfa5;
+    --shadow-color: rgba(30, 77, 59, 0.18);
+
+    --water-top: #dcebf2;
+    --water-deep: #4f8a7a;
+    --fish-roze: #e59bb6;
+    --fish-paars: #8e7cc3;
+    --fish-oranje: #e8813a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Knoppen */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color-light);
+}
+
+.btn-secondary {
+    background-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--text-color-light);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: #fff;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--surface-color);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px var(--shadow-color);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color-light);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background-color: var(--text-color);
+    color: var(--surface-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 20px var(--shadow-color);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+    z-index: 3000;
+}
+
+.toast.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toast.success {
+    background-color: var(--success-color);
+}
+
+.toast.error {
+    background-color: var(--danger-color);
+}
+
+/* ============================================
+   Vijver-specifiek
+   ============================================ */
+
+.vijver-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.vijver-stage {
+    position: relative;
+    flex: 1;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+#pondCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: manipulation;
+}
+
+.vijver-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+.vijver-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    pointer-events: auto;
+}
+
+.vijver-header h1 {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.vijver-screens {
+    position: relative;
+    flex: 1;
+    pointer-events: none;
+}
+
+.vijver-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s linear 0.35s;
+    pointer-events: none;
+}
+
+.vijver-screen.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s;
+}
+
+.vijver-card {
+    pointer-events: none;
+    background: rgba(247, 241, 227, 0.92);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px var(--shadow-color);
+    padding: 20px 24px;
+    max-width: 440px;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.vijver-screen.active .vijver-card {
+    pointer-events: auto;
+}
+
+.vijver-card h2 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.vijver-card p {
+    color: var(--text-color);
+    margin-bottom: 14px;
+}
+
+.vijver-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.fish-legend {
+    list-style: none;
+    text-align: left;
+    margin: 0 auto 6px;
+    max-width: 300px;
+}
+
+.fish-legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.fish-dot {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.fish-btn {
+    color: #22332b;
+    font-weight: 600;
+}
+
+/* Invoervelden */
+.vijver-card textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: #fffdf7;
+    color: var(--text-color);
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.draw-pad {
+    width: 100%;
+    height: 140px;
+    background: #fffdf7;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: crosshair;
+    touch-action: none;
+}
+
+#exerciseBody {
+    padding: 20px;
+}
+
+#exerciseBody canvas.draw-pad {
+    height: 220px;
+}
+
+#exerciseBody textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: #fffdf7;
+    color: var(--text-color);
+}
+
+#exerciseBody input[type="file"] {
+    margin: 8px 0;
+}
+
+#exercisePreview {
+    max-width: 100%;
+    max-height: 260px;
+    border-radius: 8px;
+    margin-top: 8px;
+    display: none;
+}
+
+/* Logboek zijpaneel */
+.vijver-logboek {
+    display: none;
+    width: 320px;
+    background: var(--surface-color);
+    border-left: 1px solid var(--border-color);
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.logboek-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.logboek-header h2 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.logboek-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.logboek-empty {
+    color: var(--text-color-light);
+    font-style: italic;
+}
+
+.logboek-item {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    background: #fffdf7;
+}
+
+.logboek-item .log-date {
+    font-size: 0.8rem;
+    color: var(--text-color-light);
+}
+
+.logboek-item .log-type {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.logboek-item .log-struggle {
+    font-size: 0.9rem;
+    margin-top: 6px;
+    white-space: pre-wrap;
+    font-style: italic;
+}
+
+.logboek-item img {
+    max-width: 100%;
+    border-radius: 6px;
+    margin-top: 6px;
+}
+
+.logboek-item .btn {
+    margin-top: 8px;
+}
+
+/* Desktop: logboek zichtbaar als zijpaneel */
+@media (min-width: 900px) {
+    .vijver-layout {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .vijver-logboek {
+        display: block;
+    }
+
+    #logboekToggle {
+        display: none;
+    }
+}
+
+/* Mobiel: logboek als overlay */
+@media (max-width: 899px) {
+    .vijver-logboek {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: min(320px, 85vw);
+        height: 100vh;
+        height: 100dvh;
+        z-index: 1500;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        box-shadow: -4px 0 20px var(--shadow-color);
+    }
+
+    .vijver-logboek.open {
+        transform: translateX(0);
+    }
+}
+
+.vijver-logboek.flash {
+    animation: logboekFlash 1.4s ease;
+}
+
+@keyframes logboekFlash {
+    0%, 100% { background: var(--surface-color); box-shadow: none; }
+    40% { background: #f3e6c8; box-shadow: -6px 0 0 var(--warning-color); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vijver-screen {
+        transition: none;
+    }
+}
