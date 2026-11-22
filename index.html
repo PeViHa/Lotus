@@ -78,7 +78,11 @@
         <aside class="vijver-logboek" id="vijverLogboek">
             <div class="logboek-header">
                 <h2>&#128214; Vijver-logboek</h2>
-                <button class="btn btn-small btn-secondary" id="exportLogBtn">&#128229; Export JSON</button>
+                <div class="logboek-header-actions">
+                    <button class="btn btn-small btn-secondary" id="exportLogBtn">&#128229; JSON</button>
+                    <button class="btn btn-small btn-secondary" id="exportHtmlBtn">&#127760; HTML</button>
+                    <button class="btn btn-small btn-secondary" id="logboekClose" aria-label="Logboek verbergen">&#10005;</button>
+                </div>
             </div>
             <div id="logboekList" class="logboek-list"></div>
         </aside>

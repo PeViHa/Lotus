@@ -989,15 +989,78 @@ function exportLog() {
     showToast('Logboek geëxporteerd 📥', 'success');
 }
 
+function exportLogHtml() {
+    const log = loadLog();
+    const items = log.map(entry => {
+        const date = new Date(entry.datum).toLocaleString('nl-NL');
+        const typeLabel = FISH_TYPES[entry.oefening.type].label;
+        let inner = `<div class="entry"><div class="date">${date}</div>` +
+            `<div class="type">${escapeHtml(typeLabel)}</div>`;
+        if (entry.oefening.opdracht) {
+            inner += `<p class="task">Opdracht: ${escapeHtml(entry.oefening.opdracht)}</p>`;
+        }
+        if (entry.blokkade && entry.blokkade.text) {
+            inner += `<p class="struggle">“${escapeHtml(entry.blokkade.text)}”</p>`;
+        }
+        if (entry.blokkade && entry.blokkade.image) {
+            inner += `<img src="${entry.blokkade.image}" alt="Jouw blokkade-tekening">`;
+        }
+        if (entry.reflectie) {
+            inner += `<p class="task">“${escapeHtml(entry.reflectie.vraag)}” — ${escapeHtml(entry.reflectie.antwoord)}</p>`;
+        }
+        if (entry.oefening.type === 'tekst') {
+            inner += `<p>${escapeHtml(entry.oefening.content)}</p>`;
+        } else {
+            inner += `<img src="${entry.oefening.content}" alt="Jouw oefening">`;
+        }
+        return inner + '</div>';
+    }).join('\n');
+    const html = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Vijver-logboek</title>
+<style>
+body { font-family: Georgia, serif; max-width: 640px; margin: 24px auto; padding: 0 16px; color: #22332b; background: #f7f1e3; }
+h1 { color: #2e6b53; }
+.entry { background: #fffdf7; border: 1px solid #d8cdb4; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.date { font-size: 0.8rem; color: #7a8b80; }
+.type { font-weight: 600; color: #2e6b53; }
+.task { font-style: italic; }
+.struggle { font-style: italic; }
+img { max-width: 100%; border-radius: 6px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<h1>🌸 Vijver-logboek</h1>
+${items || '<p>Nog geen sessies.</p>'}
+</body>
+</html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'vijver-logboek.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('Logboek geëxporteerd als HTML 🌐', 'success');
+}
+
 function openLogboek() {
     const aside = document.getElementById('vijverLogboek');
     if (window.innerWidth < 900) {
         aside.classList.toggle('open');
     } else {
+        aside.classList.remove('hidden');
         aside.classList.remove('flash');
         void aside.offsetWidth;
         aside.classList.add('flash');
     }
+}
+
+function closeLogboek() {
+    const aside = document.getElementById('vijverLogboek');
+    aside.classList.remove('open');
+    if (window.innerWidth >= 900) aside.classList.add('hidden');
 }
 
 // ============================================
@@ -1020,6 +1083,8 @@ function setupEventListeners() {
     });
 
     document.getElementById('exportLogBtn').addEventListener('click', exportLog);
+    document.getElementById('exportHtmlBtn').addEventListener('click', exportLogHtml);
+    document.getElementById('logboekClose').addEventListener('click', closeLogboek);
     document.getElementById('saveExercise').addEventListener('click', saveExercise);
 
     document.getElementById('logboekToggle').addEventListener('click', openLogboek);
