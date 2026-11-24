@@ -66,8 +66,10 @@ let exerciseType = null;
 let exerciseData = null;
 let exerciseDrew = false;
 
+const LILY_SPRITES = ['lelie-1.png', 'lelie-2.png', 'lelie-3.png'];
 const SPRITES = {};
-[['lotus', 'lotus.png'], ['steen', 'Steen.png'], ['lelie', 'lelie.png']].forEach(([key, src]) => {
+[['lotus', 'lotus.png'], ['steen', 'Steen.png'],
+ ...LILY_SPRITES.map((src, i) => ['lelie' + i, src])].forEach(([key, src]) => {
     const img = new Image();
     img.src = src;
     SPRITES[key] = img;
@@ -188,8 +190,8 @@ function drawBackground(t) {
 
 function drawLeaves(t) {
     const { W, H, waterY } = state;
-    if (spriteReady('lelie')) {
-        const img = SPRITES.lelie;
+    const lilies = [0, 1, 2].map(i => 'lelie' + i).filter(spriteReady);
+    if (lilies.length) {
         const spots = [
             [W * 0.10, waterY + 10, 1, 1],
             [W * 0.90, waterY + 24, -1, 0.9],
@@ -197,7 +199,8 @@ function drawLeaves(t) {
             [W * 0.74, waterY + H * 0.30, -0.7, 0.85]
         ];
         spots.forEach(([x, y, rot, sc], i) => {
-            const w = W * 0.17 * sc;
+            const img = SPRITES[lilies[i % lilies.length]];
+            const w = W * 0.10 * sc;
             const h = w * (img.naturalHeight / img.naturalWidth);
             ctx.save();
             ctx.translate(x, y + Math.sin(t * 0.8 + i * 1.7) * 2);
