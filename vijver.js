@@ -768,16 +768,16 @@ const EXERCISES = {
         'Blind tekenen: kijk naar een object en teken het zonder op het papier te kijken',
         'Teken iets uit je omgeving met je andere hand, max 2 minuten — lelijk mag',
         'Eén lijn: teken een dier zonder je pen van het papier te halen',
-        'Teken hetzelfde object 3x: realistisch, als kinderkrabbel, als emoji',
+        'Teken een object uit je omgeving in een stijl die je normaal nooit kiest',
         'Teken je blokkade als een wezen en geef het daarna iets belachelijks (een feesthoedje, teenslippers)',
         'Combineer twee schijnbaar niet-passende dingen uit je kamer tot één nieuw wezen'
     ],
     foto: [
-        'Fotografeer 3 dingen met de kleur paars',
-        'Fotografeer 3 dingen met een ronde vorm',
+        'Fotografeer \u00e9\u00e9n ding met de kleur paars',
+        'Fotografeer \u00e9\u00e9n ding met een ronde vorm',
         'Fotografeer iets dat je vandaag al 10x voorbij bent gelopen zonder het echt te zien',
         'Maak een foto vanaf de grond: de wereld vanuit muisperspectief',
-        'Fotografeer 3 structuren vlak bij elkaar (ruw, zacht, glimmend)',
+        'Fotografeer \u00e9\u00e9n structuur die je opvalt (bijvoorbeeld ruw, zacht of glimmend)',
         'Fotografeer het oudste dat je kunt zien vanuit waar je zit',
         'Fotografeer iets dat "niet af" of juist "verkeerd" is (zoals een scheve poster)'
     ],
