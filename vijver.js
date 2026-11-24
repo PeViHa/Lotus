@@ -487,7 +487,7 @@ function render(t) {
         drawLotus(W / 2, waterY, lotusScale, Math.max(state.bloomT, pulse), t);
     } else if (state.mode === 'done') {
         drawLotus(W / 2, waterY, lotusScale * 1.1, state.bloomT, t);
-    } else {
+    } else if (state.mode !== 'bump' && state.mode !== 'throw') {
         drawLotus(W / 2, waterY, lotusScale * 0.9, 1, t);
     }
 }
